@@ -1,0 +1,22 @@
+{
+  "name": "random-simulations",
+  "version": "1.0.0",
+  "description": "Simulations and thought experiments",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/briandamaged/node-random-simulations.git"
+  },
+  "keywords": [
+    "simulations"
+  ],
+  "author": "Brian Lauber",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/briandamaged/node-random-simulations/issues"
+  },
+  "homepage": "https://github.com/briandamaged/node-random-simulations#readme"
+}
