@@ -132,36 +132,37 @@ function go() {
 
 
 
-  const {
-    earlyVoters, remainingVoters, earlyResults,
-  } = conductEarlyVoting(voters);
+
+  const regularResults = [];
+  const informedResults = [];
 
 
-  console.log("Early voting results:");
-  console.log(JSON.stringify(earlyResults, null, 2));
+  _.times(100, function() {
+    const {
+      earlyVoters, remainingVoters, earlyResults,
+    } = conductEarlyVoting(voters);
 
+    const simulateInformedVoting = InformedVotingSimulator(earlyResults.details);
 
+    _.times(20, function() {
+      const regularVoters = remainingVoters.filter(simulateRegularVoting);
+      regularResults.push(summarizeResults(earlyVoters.concat(regularVoters)));
 
+      const informedVoters = remainingVoters.filter(simulateInformedVoting);
+      informedResults.push(summarizeResults(earlyVoters.concat(informedVoters)));
+    });
 
-  const simulateInformedVoting = InformedVotingSimulator(earlyResults.details);
-
-  const regularResults = _.times(1000, function() {
-    const regularVoters = remainingVoters.filter(simulateRegularVoting);
-    return summarizeResults(earlyVoters.concat(regularVoters));
   });
 
 
-  console.log("If people are not aware of blind results:");
+
+
+  console.log("If people are not aware of early results:");
   console.log(JSON.stringify(summarizeVictories(regularResults), null, 2));
 
 
-  const informedResults = _.times(1000, function() {
-    const informedVoters = remainingVoters.filter(simulateInformedVoting);
-    return summarizeResults(earlyVoters.concat(informedVoters));
-  });
 
-
-  console.log("If people are aware of blind results:");
+  console.log("If people are aware of early results:");
   console.log(JSON.stringify(summarizeVictories(informedResults), null, 2));
 
 
