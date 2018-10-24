@@ -18,5 +18,8 @@
   "bugs": {
     "url": "https://github.com/briandamaged/node-random-simulations/issues"
   },
-  "homepage": "https://github.com/briandamaged/node-random-simulations#readme"
+  "homepage": "https://github.com/briandamaged/node-random-simulations#readme",
+  "dependencies": {
+    "lodash": "^4.17.11"
+  }
 }
