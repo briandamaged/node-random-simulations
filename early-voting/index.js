@@ -26,6 +26,17 @@ function simulateRegularVoting(voter) {
 }
 
 
+function InformedVotingSimulator(details) {
+  function simulateInformedVoting(voter) {
+    const desperation = (1 - details[voter.choice].percentage);
+    const p = Math.sqrt(voter.p_vote * desperation);
+
+    return (Math.random() <= p);
+  }
+
+  return simulateInformedVoting;
+}
+
 
 function tallyResults(voters) {
   const groupings = _.groupBy(voters, (v)=> v.choice);
@@ -69,7 +80,95 @@ function summarizeResults(voters) {
 
 
 
-const voters = _.times(100, createVoter);
+function summarizeVictories(results) {
+  const retval = Object.create(null);
+
+  for(const {winner} of results) {
+    retval[winner] = retval[winner] || {victories: 0};
+    retval[winner].victories++;
+  }
+
+  for(const k in retval) {
+    retval[k].percentage = retval[k].victories / results.length;
+  }
+
+  return retval;
+}
 
 
-console.log(JSON.stringify(summarizeResults(voters), null, 2));
+
+function conductEarlyVoting(voters) {
+  const phase1 = _.groupBy(voters, simulateEarlyVoting);
+
+  const earlyVoters = phase1[true];
+  const remainingVoters = phase1[false];
+
+  const earlyResults = summarizeResults(earlyVoters);
+
+  return {
+    earlyVoters, remainingVoters, earlyResults,
+  };
+
+  // const simulateInformedVoting = InformedVotingSimulator(earlyResults.details);
+
+
+  // const regularVoters = simulateRegularVoting(remainingVoters);
+  // const informedVoters = simulateInformedVoting(remainingVoters);
+
+
+  // return earlyVoters;
+}
+
+
+
+
+
+
+function go() {
+  const voters = _.times(500, createVoter);
+
+  console.log("If EVERYBODY votes:");
+  console.log(JSON.stringify(summarizeResults(voters), null, 2));
+
+
+
+  const {
+    earlyVoters, remainingVoters, earlyResults,
+  } = conductEarlyVoting(voters);
+
+
+  console.log("Early voting results:");
+  console.log(JSON.stringify(earlyResults, null, 2));
+
+
+
+
+  const simulateInformedVoting = InformedVotingSimulator(earlyResults.details);
+
+  const regularResults = _.times(1000, function() {
+    const regularVoters = remainingVoters.filter(simulateRegularVoting);
+    return summarizeResults(earlyVoters.concat(regularVoters));
+  });
+
+
+  console.log("If people are not aware of blind results:");
+  console.log(JSON.stringify(summarizeVictories(regularResults), null, 2));
+
+
+  const informedResults = _.times(1000, function() {
+    const informedVoters = remainingVoters.filter(simulateInformedVoting);
+    return summarizeResults(earlyVoters.concat(informedVoters));
+  });
+
+
+  console.log("If people are aware of blind results:");
+  console.log(JSON.stringify(summarizeVictories(informedResults), null, 2));
+
+
+
+}
+
+
+
+go();
+
