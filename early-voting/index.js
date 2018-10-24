@@ -108,15 +108,6 @@ function conductEarlyVoting(voters) {
   return {
     earlyVoters, remainingVoters, earlyResults,
   };
-
-  // const simulateInformedVoting = InformedVotingSimulator(earlyResults.details);
-
-
-  // const regularVoters = simulateRegularVoting(remainingVoters);
-  // const informedVoters = simulateInformedVoting(remainingVoters);
-
-
-  // return earlyVoters;
 }
 
 
@@ -127,8 +118,9 @@ function conductEarlyVoting(voters) {
 function go() {
   const voters = _.times(500, createVoter);
 
+  const idealizedResults = summarizeResults(voters);
   console.log("If EVERYBODY votes:");
-  console.log(JSON.stringify(summarizeResults(voters), null, 2));
+  console.log(JSON.stringify(idealizedResults, null, 2));
 
 
 
@@ -156,14 +148,17 @@ function go() {
 
 
 
-
+  console.log();
   console.log("If people are not aware of early results:");
-  console.log(JSON.stringify(summarizeVictories(regularResults), null, 2));
+  const regularVictories = summarizeVictories(regularResults)
+  console.log(JSON.stringify(regularVictories, null, 2));
+  console.log(regularVictories[idealizedResults.winner].percentage);
 
-
-
+  console.log();
   console.log("If people are aware of early results:");
-  console.log(JSON.stringify(summarizeVictories(informedResults), null, 2));
+  const informedVictories = summarizeVictories(informedResults);
+  console.log(JSON.stringify(informedVictories, null, 2));
+  console.log(informedVictories[idealizedResults.winner].percentage);
 
 
 
