@@ -10,7 +10,7 @@ const candidates = [
 
 function createVoter() {
   return {
-    p_early: (Math.random() * 0.1),
+    p_early: (Math.random() * 0.5),
     p_vote: Math.random(),
     choice: _.sample(candidates),
   }
@@ -26,10 +26,27 @@ function simulateRegularVoting(voter) {
 }
 
 
+const CENTER = 0.6;
+function getDesperation(d) {
+  const aligned = d - CENTER;
+  return Math.pow(2, (-5 * Math.pow(aligned, 2)) + (-100 * Math.pow(aligned, 4)));
+}
+
+function foo(p, d) {
+  const X = ((1 - d) * (1 - Math.pow((p - 1), 2)));
+  const Y = ((d) * (Math.pow(p, 2)));
+  return (X + Y);
+}
+
+
 function InformedVotingSimulator(details) {
   function simulateInformedVoting(voter) {
-    const desperation = (1 - details[voter.choice].percentage);
-    const p = Math.sqrt(voter.p_vote * desperation);
+    const d = getDesperation(details[voter.choice].percentage)
+
+    const p = (
+      (1 - d) * (1 - Math.pow((voter.p_vote - 1), 2)) +
+      (d) * (Math.pow(voter.p_vote, 2))
+    );
 
     return (Math.random() <= p);
   }
@@ -116,7 +133,7 @@ function conductEarlyVoting(voters) {
 
 
 function go() {
-  const voters = _.times(500, createVoter);
+  const voters = _.times(1000, createVoter);
 
   const idealizedResults = summarizeResults(voters);
   console.log("If EVERYBODY votes:");
