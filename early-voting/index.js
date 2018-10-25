@@ -26,15 +26,15 @@ function simulateRegularVoting(voter) {
 }
 
 
-const CENTER = 0.6;
+const CENTER = 0.35;
 function getDesperation(d) {
   const aligned = d - CENTER;
   return Math.pow(2, (-5 * Math.pow(aligned, 2)) + (-100 * Math.pow(aligned, 4)));
 }
 
 function foo(p, d) {
-  const X = ((1 - d) * (1 - Math.pow((p - 1), 2)));
-  const Y = ((d) * (Math.pow(p, 2)));
+  const X = ((d) * (1 - Math.pow((p - 1), 2)));
+  const Y = ((1 - d) * (Math.pow(p, 2)));
   return (X + Y);
 }
 
@@ -43,10 +43,7 @@ function InformedVotingSimulator(details) {
   function simulateInformedVoting(voter) {
     const d = getDesperation(details[voter.choice].percentage)
 
-    const p = (
-      (1 - d) * (1 - Math.pow((voter.p_vote - 1), 2)) +
-      (d) * (Math.pow(voter.p_vote, 2))
-    );
+    const p = foo(voter.p_vote, d);
 
     return (Math.random() <= p);
   }
